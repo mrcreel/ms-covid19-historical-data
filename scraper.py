@@ -5,15 +5,17 @@ import requests
 from bs4 import BeautifulSoup
 
 from arrays import pages
-from functions import getDate, getWeekday, days_of_week
+from functions import getDate, getWeekday, days_of_week, getCases
 
 system('clear')
 
 data_dict = {}
 
 for page in pages:
-
+    print('--------------------------')
     page_date_posted = page[0]
+    print('-', 'Processing:', page_date_posted, '-')
+    print('---Getting date...........')
 
     url = page[1]
     r = requests.get(url)
@@ -23,30 +25,22 @@ for page in pages:
     page_date_updated_text_string = soup.find(
         'div', id="assetNow_pageSubtitle").text
     page_date_updated_date_string = page_date_updated_text_string[8:]
-
     page_date_updated = getDate(page_date_updated_date_string)
-    # Pull out the date
+    print('----Updated on:', page_date_updated)
 
-    # date_updated = datetime.datetime.strptime(
-    #     updated_text[8:], '%B %d, %Y').date()
+    cases_confirmed = getCases(page_date_posted, page)
 
-    # for ul in soup.select('.shadedBlue'):
-    #     cases_confirmed = int(ul.select('li')[0].text.split(': ')[1])
+    date_dict = {
+        'page_date_updated': page_date_updated,
+        'cases_confirmed': cases_confirmed
+    }
 
-    print(
-        'Posted on:', getWeekday(page_date_posted), page_date_posted,
-    )
-    print(
-        'Updated on:', getWeekday(page_date_updated), page_date_updated
-    )
-    print('==========')
+    data_dict[page_date_posted] = date_dict
 
-    # date_dict = {
-    #     'date_updated': date_updated,
-    #     'cases_confirmed': cases_confirmed
-    # }
-    # data_dict[date_posted] = date_dict
+    print('--------------------------')
 
-    # print(date_dict)
 
-# print(data_dict)
+print('**************************')
+
+
+print(data_dict)
