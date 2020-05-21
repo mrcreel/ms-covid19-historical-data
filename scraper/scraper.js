@@ -40,16 +40,20 @@ const getData = async () => {
     const sel = '#assetNow_pageSubtitle'
     const updatedOn = $(sel).text().substring(8)
 
-    const pageUpdatedOn = updatedOn.substring(0, updatedOn.search(', 2') + 6)
+    const pageUpdatedOn = Date.parse(
+      updatedOn.substring(0, updatedOn.search(', 2') + 6)
+    )
     const pageUpdatedOnString = formatDate(pageUpdatedOn)
 
     dateData.push({
-      pageDatePostedOn: pagePostedOnString,
-      pageDateUpdatedOn: pageUpdatedOnString,
+      pageDatePostedOn: pagePostedOn,
+      pageDateUpdatedOn: pageUpdatedOn,
     })
 
-    console.log(`${ct})} ${url}`)
-    console.log(dateData)
+    console.log(`${ct}) ${url}`)
+    console.log(
+      `Posted on ${pagePostedOnString} => Updated on ${pageUpdatedOnString}`
+    )
 
     console.log('-------------')
     data.push(dateData)
