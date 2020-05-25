@@ -43,7 +43,7 @@ def getCases(date, page):
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
 
-    test = soup.select('.shadedBlue')[0]
+    test = soup.select('.shadedBlue > li')[0]
     test_li = test.select('li')
     if len(test_li) > 0:
         cases_confirmed = int(test_li[0].select('strong')[0].text)

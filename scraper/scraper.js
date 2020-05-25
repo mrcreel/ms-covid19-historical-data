@@ -20,48 +20,48 @@ function formatDate(date) {
   return `${dayOfWeek} ${year}-${month}-${day}`
 }
 
-const getData = async () => {
+const getDataElement = async ($, sel) => {}
+
+const scrapePage = async () => {
   data = []
   console.clear()
 
-  for (let ct = 0; ct < pages.length; ct++) {
-    const dateData = []
+  for (let ct = 0; ct < pages.length - 1; ct++) {
+    // const dateData = []
     const page = pages[ct]
 
     let pagePostedOn = new Date(page[0])
-    pagePostedOn = pagePostedOn.setDate(pagePostedOn.getDate() + 1)
-    const pagePostedOnString = formatDate(pagePostedOn)
+    // pagePostedOn = pagePostedOn.setDate(pagePostedOn.getDate() + 1)
+    // const pagePostedOnString = formatDate(pagePostedOn)
 
     const url = `https://web.archive.org/web/${page[1]}/https://msdh.ms.gov/msdhsite/_static/14,0,420.html`
+    // const response = await axios.get(url)
+    // const $ = await cheerio.load(response.data)
 
-    const response = await axios.get(url)
-    const $ = await cheerio.load(response.data)
+    // console.log(`${ct}) ${url}`)
+    // console.log(`${ct}) ${page[0]}`)
+    console.log(`${ct}) ${formatDate(pagePostedOn)}`)
 
+    /*
     const sel = '#assetNow_pageSubtitle'
     const updatedOn = $(sel).text().substring(8)
-
     const pageUpdatedOn = Date.parse(
       updatedOn.substring(0, updatedOn.search(', 2') + 6)
-    )
-    const pageUpdatedOnString = formatDate(pageUpdatedOn)
+      )
+ */
+    // const pageUpdatedOnString = formatDate(pageUpdatedOn)
 
-    dateData.push({
-      pageDatePostedOn: pagePostedOn,
-      pageDateUpdatedOn: pageUpdatedOn,
-    })
-
-    console.log(`${ct}) ${url}`)
+    /*
     console.log(
-      `Posted on ${pagePostedOnString} => Updated on ${pageUpdatedOnString}`
+      `Posted on ${pagePostedOnString}` // => Updated on ${pageUpdatedOnString}`
     )
+    */
+    // data.push(dateData)
 
     console.log('-------------')
-    data.push(dateData)
   }
-  console.log(data)
-  return data
 }
-getData()
+scrapePage()
 
 // console.log(data)
 /*
