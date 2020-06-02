@@ -1,58 +1,35 @@
 const axios = require('axios')
 const cheerio = require('cheerio')
 
-const pages = require('./arrays')
-
-function formatDate(date) {
-  const days_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear(),
-    dayOfWeek = days_of_week[d.getDay()]
-
-  if (month.length < 2) month = '0' + month
-  if (day.length < 2) day = '0' + day
-
-  return `${dayOfWeek} ${year}-${month}-${day}`
-}
+const { urls } = require('./arrays')
+const { webArchiveDateParser } = require('./functions')
 
 const scrapePage = async () => {
   console.clear()
 
-  for (let p = 0; p < pages.length; p++) {
-    const page = pages[p]
-    const dayString = page[0]
+  for (let u = 0; u < urls.length; u++) {
+    const url = urls[u]
 
-    const _Y = dayString.substring(0, 4)
-    const _M = dayString.substring(4, 6)
-    const _D = dayString.substring(6, 8)
+    const pagePostedOn = webArchiveDateParser(url)
 
-    const pageDatePostedString = `${_Y}-${_M}-${_D}`
+    if (new Date(pagePostedOn) <= new Date('12/12/2121')) {
+      const response = await axios.get(url)
+      const $ = await cheerio.load(response.data)
 
-    const postedDate = new Date(_Y, _M - 1, _D).toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-    })
+      const pageUpdatedOn = $('#assetNow_pageSubtitle').text().substring(8)
 
-    const url = `https://web.archive.org/web/${dayString}/https://msdh.ms.gov/msdhsite/_static/14,0,420.html`
+      console.log(`${u + 1}) URL: ${url}`)
+      console.log(`  -> Posted : ${pagePostedOn} | Updated: ${pageUpdatedOn}`)
+      const strongs = $('strong')
 
-    const response = await axios.get(url)
-    const $ = await cheerio.load(response.data)
+      strongs.each((idx, ele) => {
+        console.log(
+          `  -> -> ${idx}) ${$(ele).text()} | ${$(ele).parent().text()}`
+        )
+      })
 
-    const sel = '#assetNow_pageSubtitle'
-    const pageUpdatedOn = new Date($(sel).text().substring(8))
-
-    console.log(`${p}) ${url}`)
-
-    const res = $('strong')
-
-    const dayData = {
-      pageDatePosted: postedDate,
-      pageDateUpdated: pageUpdatedOn,
+      console.log('=========================================================')
     }
-
-    // console.log(dayData)
-    console.log('-------------------------------------')
   }
 }
 scrapePage()
